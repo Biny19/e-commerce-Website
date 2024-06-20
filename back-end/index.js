@@ -215,12 +215,20 @@ app.get('/newcollection', async (req, res) => {
 })
 
 // Creating endpoint for related products
-app.get('/relatedproducts', async (req, res,) => {
-    let products = await Product.find({});
-    let related_products = products.slice(0,4);
-    console.log("Related Products Fetched");
-    res.send(related_products);
-})
+app.get('/relatedproducts', async (req, res) => {
+    try {
+        const category = req.query.category;  // Get the category from query params
+        const limit = parseInt(req.query.limit) || 4; // Default to 4 if no limit is provided
+
+        // Find products with the given category
+        let products = await Product.find({ category }).limit(limit);
+        res.send(products);
+    }
+    catch (error) {
+        console.error(`Error fetching related products: ${error}`);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 // Creating endpoint for popular in women section
 app.get('/popularwomen', async (req, res) => {
